@@ -12,26 +12,26 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg-deep: #0f0820;
-      --bg-mid: #1a0d2e;
-      --bg-card: #221540;
-      --bg-glass: rgba(34, 21, 64, 0.7);
-      --plum: #6b3d7a;
-      --plum-light: #8a5499;
-      --plum-glow: rgba(107, 61, 122, 0.3);
-      --gold: #c9a84c;
-      --gold-soft: #d4b96a;
-      --gold-glow: rgba(201, 168, 76, 0.2);
-      --sapphire: #2b3a5c;
-      --sapphire-light: #3d5082;
+      --bg-deep: #1c1118;
+      --bg-mid: #251620;
+      --bg-card: #2e1c2a;
+      --bg-glass: rgba(46, 28, 42, 0.75);
+      --plum: #9b5c72;
+      --plum-light: #b87a90;
+      --plum-glow: rgba(155, 92, 114, 0.28);
+      --gold: #d4b896;
+      --gold-soft: #dfc9ae;
+      --gold-glow: rgba(212, 184, 150, 0.18);
+      --sapphire: #7a5c8a;
+      --sapphire-light: #9b7aaa;
       --burgundy: #5c2b3a;
-      --text-primary: #e8dff5;
-      --text-secondary: #b8a8d4;
-      --text-muted: #7a6d94;
-      --text-gold: #d4b96a;
+      --text-primary: #f0e8ec;
+      --text-secondary: #cdb8c4;
+      --text-muted: #8c7480;
+      --text-gold: #dfc9ae;
       --radius: 16px;
       --radius-sm: 10px;
       --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -44,8 +44,8 @@
       overflow: hidden;
       background: var(--bg-deep);
       color: var(--text-primary);
-      font-family: 'Jost', sans-serif;
-      font-weight: 300;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 400;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -109,7 +109,7 @@
       gap: 0;
     }
     .crown-icon {
-      font-size: 52px;
+      font-size: 48px;
       line-height: 1;
       margin-bottom: 20px;
       animation: float 4s ease-in-out infinite;
@@ -119,9 +119,9 @@
       50% { transform: translateY(-8px); }
     }
     .welcome-title {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Lora', serif;
       font-size: clamp(38px, 10vw, 58px);
-      font-weight: 300;
+      font-weight: 400;
       line-height: 1.05;
       letter-spacing: 0.02em;
       color: var(--text-primary);
@@ -139,9 +139,9 @@
       margin-bottom: 32px;
     }
     .welcome-verse {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Lora', serif;
       font-style: italic;
-      font-size: 15px;
+      font-size: 16px;
       color: var(--text-secondary);
       max-width: 280px;
       line-height: 1.7;
@@ -159,7 +159,7 @@
       border: 1px solid rgba(201, 168, 76, 0.3);
       padding: 16px 48px;
       border-radius: 50px;
-      font-family: 'Jost', sans-serif;
+      font-family: 'Nunito', sans-serif;
       font-size: 14px;
       letter-spacing: 0.15em;
       text-transform: uppercase;
@@ -199,12 +199,12 @@
       cursor: pointer;
       padding: 8px 4px;
       transition: color var(--transition);
-      font-family: 'Jost', sans-serif;
+      font-family: 'Nunito', sans-serif;
     }
     .nav-btn.active { color: var(--gold-soft); }
     .nav-btn:hover { color: var(--text-secondary); }
-    .nav-icon { font-size: 20px; line-height: 1; }
-    .nav-label { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; }
+    .nav-icon { font-size: 16px; line-height: 1; letter-spacing: 0; }
+    .nav-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
 
     /* ── SCROLLABLE CONTENT AREA ── */
     .content-scroll {
@@ -222,7 +222,7 @@
       flex-shrink: 0;
     }
     .page-title {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Lora', serif;
       font-size: 28px;
       font-weight: 400;
       color: var(--text-primary);
@@ -275,7 +275,7 @@
       margin-bottom: 6px;
     }
     .chapter-name {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Lora', serif;
       font-size: 22px;
       font-weight: 400;
       color: var(--text-primary);
@@ -333,7 +333,7 @@
     }
     .back-btn:hover { color: var(--gold-soft); }
     .reader-title-small {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Lora', serif;
       font-size: 16px;
       color: var(--text-secondary);
       flex: 1;
@@ -356,18 +356,18 @@
       content: '';
       flex: 1;
       height: 1px;
-      background: linear-gradient(90deg, rgba(201,168,76,0.3), transparent);
+      background: linear-gradient(90deg, rgba(212,184,150,0.3), transparent);
     }
 
     .scripture-block {
-      background: linear-gradient(135deg, rgba(107, 61, 122, 0.2), rgba(43, 58, 92, 0.2));
+      background: linear-gradient(135deg, rgba(155, 92, 114, 0.2), rgba(122, 92, 138, 0.2));
       border: 1px solid rgba(201, 168, 76, 0.15);
       border-radius: var(--radius);
       padding: 24px 20px;
       text-align: center;
     }
     .scripture-text {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Lora', serif;
       font-style: italic;
       font-size: 18px;
       line-height: 1.7;
@@ -382,15 +382,15 @@
     }
 
     .body-text {
-      font-size: 15px;
-      line-height: 1.85;
+      font-size: 16px;
+      line-height: 1.9;
       color: var(--text-secondary);
     }
     .body-text p { margin-bottom: 16px; }
 
     .declaration-lines { display: flex; flex-direction: column; gap: 6px; }
     .declaration-line {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Lora', serif;
       font-size: 17px;
       font-style: italic;
       color: var(--text-primary);
@@ -418,10 +418,10 @@
     }
 
     .prayer-block {
-      background: rgba(43, 58, 92, 0.3);
+      background: rgba(122, 92, 138, 0.3);
       border-radius: var(--radius);
       padding: 20px;
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Lora', serif;
       font-style: italic;
       font-size: 16px;
       line-height: 1.8;
@@ -458,7 +458,7 @@
       border-radius: 50px;
       padding: 8px 16px;
       color: var(--text-muted);
-      font-family: 'Jost', sans-serif;
+      font-family: 'Nunito', sans-serif;
       font-size: 11px;
       letter-spacing: 0.1em;
       text-transform: uppercase;
@@ -483,9 +483,9 @@
       cursor: pointer;
       transition: all var(--transition);
     }
-    .journal-entry-card:hover { border-color: rgba(201, 168, 76, 0.2); }
+    .journal-entry-card:hover { border-color: rgba(212, 184, 150, 0.18); }
     .journal-entry-date { font-size: 10px; color: var(--text-muted); letter-spacing: 0.1em; margin-bottom: 6px; }
-    .journal-entry-title { font-family: 'Cormorant Garamond', serif; font-size: 17px; color: var(--text-primary); margin-bottom: 4px; }
+    .journal-entry-title { font-family: 'Lora', serif; font-size: 17px; color: var(--text-primary); margin-bottom: 4px; }
     .journal-entry-preview { font-size: 12px; color: var(--text-muted); line-height: 1.5; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 
     .journal-write {
@@ -494,12 +494,12 @@
       height: 100%;
     }
     .journal-prompt-banner {
-      background: linear-gradient(135deg, rgba(107,61,122,0.25), rgba(43,58,92,0.25));
-      border: 1px solid rgba(201,168,76,0.15);
+      background: linear-gradient(135deg, rgba(155,92,114,0.25), rgba(43,58,92,0.25));
+      border: 1px solid rgba(212,184,150,0.15);
       border-radius: var(--radius);
       padding: 16px;
       margin-bottom: 16px;
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Lora', serif;
       font-style: italic;
       font-size: 16px;
       color: var(--text-secondary);
@@ -512,7 +512,7 @@
       border-radius: var(--radius);
       padding: 20px;
       color: var(--text-primary);
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Lora', serif;
       font-size: 16px;
       line-height: 1.8;
       resize: none;
@@ -521,7 +521,7 @@
       min-height: 220px;
     }
     .journal-textarea::placeholder { color: var(--text-muted); font-style: italic; }
-    .journal-textarea:focus { border-color: rgba(201,168,76,0.3); }
+    .journal-textarea:focus { border-color: rgba(212,184,150,0.3); }
 
     .btn-save {
       background: linear-gradient(135deg, var(--plum), var(--sapphire));
@@ -529,7 +529,7 @@
       border: 1px solid rgba(201, 168, 76, 0.25);
       padding: 14px 28px;
       border-radius: 50px;
-      font-family: 'Jost', sans-serif;
+      font-family: 'Nunito', sans-serif;
       font-size: 12px;
       letter-spacing: 0.15em;
       text-transform: uppercase;
@@ -548,7 +548,7 @@
     }
     .prompt-chip {
       background: var(--bg-card);
-      border: 1px solid rgba(201,168,76,0.15);
+      border: 1px solid rgba(212,184,150,0.15);
       border-radius: 50px;
       padding: 7px 14px;
       font-size: 11px;
@@ -564,13 +564,13 @@
       padding: 20px 0 24px;
     }
     .crown-display {
-      font-size: 64px;
+      font-size: 52px;
       line-height: 1;
       margin-bottom: 12px;
       animation: float 4s ease-in-out infinite;
     }
     .crown-name-display {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Lora', serif;
       font-size: 26px;
       font-weight: 400;
       color: var(--gold-soft);
@@ -586,10 +586,10 @@
       background: var(--bg-card);
       border-radius: var(--radius-sm);
       padding: 14px 16px;
-      border: 1px solid rgba(201,168,76,0.12);
+      border: 1px solid rgba(212,184,150,0.12);
     }
     .truth-badge-icon { font-size: 20px; }
-    .truth-badge-text { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: var(--text-primary); font-style: italic; }
+    .truth-badge-text { font-family: 'Lora', serif; font-size: 15px; color: var(--text-primary); font-style: italic; }
     .truth-badge-src { font-size: 10px; color: var(--text-muted); letter-spacing: 0.08em; }
 
     .name-picker {
@@ -603,7 +603,7 @@
       border: 1px solid rgba(255,255,255,0.07);
       border-radius: var(--radius-sm);
       padding: 14px 18px;
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Lora', serif;
       font-size: 17px;
       color: var(--text-secondary);
       cursor: pointer;
@@ -611,7 +611,7 @@
       text-align: center;
     }
     .name-option:hover, .name-option.selected {
-      background: linear-gradient(135deg, rgba(107,61,122,0.3), rgba(43,58,92,0.3));
+      background: linear-gradient(135deg, rgba(155,92,114,0.3), rgba(122,92,138,0.3));
       border-color: var(--gold);
       color: var(--gold-soft);
     }
@@ -625,7 +625,7 @@
       padding: 18px;
       transition: all var(--transition);
     }
-    .declaration-post:hover { border-color: rgba(201,168,76,0.15); }
+    .declaration-post:hover { border-color: rgba(212,184,150,0.15); }
     .post-name {
       font-size: 11px;
       color: var(--gold-soft);
@@ -634,7 +634,7 @@
       margin-bottom: 8px;
     }
     .post-text {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Lora', serif;
       font-style: italic;
       font-size: 16px;
       line-height: 1.65;
@@ -651,10 +651,10 @@
       width: fit-content;
       transition: color var(--transition);
     }
-    .post-hearts:hover { color: #c97b9b; }
+    .post-hearts:hover { color: #c4869a; }
     .overflow-input-section {
       background: var(--bg-card);
-      border: 1px solid rgba(201,168,76,0.15);
+      border: 1px solid rgba(212,184,150,0.15);
       border-radius: var(--radius);
       padding: 20px;
       margin-bottom: 24px;
@@ -673,8 +673,8 @@
       border-radius: var(--radius-sm);
       padding: 14px;
       color: var(--text-primary);
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 15px;
+      font-family: 'Lora', serif;
+      font-size: 16px;
       line-height: 1.7;
       resize: none;
       outline: none;
@@ -683,7 +683,7 @@
       transition: border-color var(--transition);
     }
     .overflow-textarea::placeholder { color: var(--text-muted); font-style: italic; }
-    .overflow-textarea:focus { border-color: rgba(201,168,76,0.3); }
+    .overflow-textarea:focus { border-color: rgba(212,184,150,0.3); }
 
     /* ── TOAST ── */
     .toast {
@@ -692,7 +692,7 @@
       left: 50%;
       transform: translateX(-50%) translateY(20px);
       background: linear-gradient(135deg, var(--plum), var(--sapphire));
-      border: 1px solid rgba(201,168,76,0.3);
+      border: 1px solid rgba(212,184,150,0.3);
       border-radius: 50px;
       padding: 12px 24px;
       font-size: 13px;
@@ -728,7 +728,7 @@
     }
     .modal-sheet {
       background: var(--bg-mid);
-      border: 1px solid rgba(201,168,76,0.15);
+      border: 1px solid rgba(212,184,150,0.15);
       border-radius: var(--radius) var(--radius) 0 0;
       padding: 24px 20px max(24px, env(safe-area-inset-bottom));
       width: 100%;
@@ -778,7 +778,7 @@
 
   <!-- WELCOME SCREEN -->
   <div class="screen active" id="screen-welcome">
-    <div class="crown-icon shimmer">👑</div>
+    <div class="crown-icon shimmer">✦</div>
     <h1 class="welcome-title">Crowned<br><em>in Glory</em></h1>
     <p class="welcome-subtitle">A Quietly Bold Devotional</p>
     <div class="welcome-verse">
@@ -840,19 +840,19 @@
 
     <nav class="bottom-nav" id="main-nav">
       <button class="nav-btn active" onclick="switchTab('sanctuary')" data-tab="sanctuary">
-        <span class="nav-icon">🕊</span>
+        <span class="nav-icon">✦</span>
         <span class="nav-label">Sanctuary</span>
       </button>
       <button class="nav-btn" onclick="switchTab('journal')" data-tab="journal">
-        <span class="nav-icon">✍️</span>
+        <span class="nav-icon">✒</span>
         <span class="nav-label">Journal</span>
       </button>
       <button class="nav-btn" onclick="switchTab('crown')" data-tab="crown">
-        <span class="nav-icon">👑</span>
+        <span class="nav-icon">◈</span>
         <span class="nav-label">Crown Room</span>
       </button>
       <button class="nav-btn" onclick="switchTab('overflow')" data-tab="overflow">
-        <span class="nav-icon">🌊</span>
+        <span class="nav-icon">∿</span>
         <span class="nav-label">Overflow</span>
       </button>
     </nav>
@@ -1051,12 +1051,12 @@ function closeReader() {
 }
 
 const tabLabels = {
-  reflection: '✦ Reflection',
-  declaration: '📜 Declaration',
-  devotional: '📖 Devotional',
-  affirmation: '🌟 Affirmation',
-  prayer: '🙏 Prayer',
-  playlist: '🎵 Playlist'
+  reflection: 'Reflection',
+  declaration: 'Declaration',
+  devotional: 'Devotional',
+  affirmation: 'Affirmation',
+  prayer: 'Prayer',
+  playlist: 'Playlist'
 };
 
 function renderReaderTabs() {
@@ -1102,7 +1102,7 @@ function renderReaderContent(tab) {
       <div class="reader-section">
         <div class="section-tag">Journal Prompts</div>
         <div class="prompt-chips">
-          ${ch.journalPrompts.map((p,i) => `<div class="prompt-chip" onclick="openJournalFromPrompt(${ch.id}, ${i})">${i===0?'🪞':i===1?'✍️':'🎙️'} Prompt ${i+1}</div>`).join('')}
+          ${ch.journalPrompts.map((p,i) => `<div class="prompt-chip" onclick="openJournalFromPrompt(${ch.id}, ${i})">Prompt ${i+1}</div>`).join('')}
         </div>
       </div>`;
   } else if (tab === 'declaration') {
@@ -1133,7 +1133,7 @@ function renderReaderContent(tab) {
       <div class="reader-section">
         <div class="section-tag">Crown Truth Unlocked</div>
         <div class="truth-badge">
-          <span class="truth-badge-icon">👑</span>
+          <span class="truth-badge-icon">✦</span>
           <div>
             <div class="truth-badge-text">${ch.crownTruth}</div>
             <div class="truth-badge-src">${ch.title}</div>
@@ -1147,7 +1147,7 @@ function renderReaderContent(tab) {
         <div class="playlist-items">
           ${ch.playlist.map(s => `
             <div class="playlist-item">
-              <span class="playlist-icon">🎵</span>
+              <span class="playlist-icon">♪</span>
               <div class="playlist-info">
                 <div class="playlist-song">${s.title}</div>
                 <div class="playlist-artist">${s.artist}</div>
@@ -1175,7 +1175,7 @@ function renderJournal() {
             <div class="journal-entry-preview">${e.text}</div>
           </div>`).join('')}</div>`
       : `<div class="empty-state">
-          <div class="empty-icon">📝</div>
+          <div class="empty-icon">✦</div>
           <p>Your pages are waiting.<br>Every word you write here is yours.</p>
         </div>`}`;
 }
@@ -1189,7 +1189,7 @@ function openJournalWrite(chapterId, promptIndex) {
     ${prompt ? `<div class="journal-prompt-banner">"${prompt}"</div>` : ''}
     <input type="text" id="journal-entry-title" placeholder="Give this entry a title…" style="
       width:100%;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,0.1);
-      color:var(--text-primary);font-family:'Cormorant Garamond',serif;font-size:20px;
+      color:var(--text-primary);font-family:'Lora',serif;font-size:20px;
       padding:8px 0 12px;margin-bottom:16px;outline:none;letter-spacing:0.02em;
     " />
     <textarea id="journal-textarea" class="journal-textarea" placeholder="${prompt ? 'Let it flow...' : 'Begin writing your truth here…'}">${''}</textarea>
@@ -1205,7 +1205,7 @@ function openJournalEntry(index) {
   el.innerHTML = `
     <input type="text" id="journal-entry-title" value="${e.title || ''}" placeholder="Title…" style="
       width:100%;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,0.1);
-      color:var(--text-primary);font-family:'Cormorant Garamond',serif;font-size:20px;
+      color:var(--text-primary);font-family:'Lora',serif;font-size:20px;
       padding:8px 0 12px;margin-bottom:16px;outline:none;letter-spacing:0.02em;
     " />
     <textarea id="journal-textarea" class="journal-textarea">${e.text}</textarea>
@@ -1246,7 +1246,7 @@ function renderCrownRoom() {
 
   el.innerHTML = `
     <div class="crown-hero">
-      <div class="crown-display">👑</div>
+      <div class="crown-display">✦</div>
       <div class="crown-name-display">${name}</div>
       <div class="crown-name-desc">${state.crownName ? 'Your chosen identity' : 'Choose your crown name below'}</div>
     </div>
@@ -1298,7 +1298,7 @@ function renderOverflow() {
     <div class="declarations-wall">
       ${state.declarations.slice().reverse().map((d,i) => `
         <div class="declaration-post">
-          <div class="post-name">👑 ${d.name}</div>
+          <div class="post-name">${d.name}</div>
           <div class="post-text">"${d.text}"</div>
           <div class="post-hearts" onclick="heartPost(${state.declarations.length - 1 - i})">
             ${state.heartedPosts[state.declarations.length - 1 - i] ? '♥' : '♡'} ${d.hearts}
