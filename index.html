@@ -787,6 +787,77 @@
     .home-btn:hover { color: var(--gold-soft); }
 
 
+
+    /* ── RESET ── */
+    .reset-section {
+      margin-top: 8px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      text-align: center;
+    }
+    .reset-btn {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 50px;
+      padding: 10px 24px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .reset-btn:hover { border-color: rgba(196,134,154,0.4); color: #c4869a; }
+
+    /* ── CONFIRM MODAL ── */
+    .confirm-box {
+      text-align: center;
+      padding: 8px 0;
+    }
+    .confirm-box-title {
+      font-family: 'Lora', serif;
+      font-size: 20px;
+      font-style: italic;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+    }
+    .confirm-box-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+    .confirm-actions { display: flex; gap: 10px; justify-content: center; }
+    .confirm-yes {
+      background: rgba(196,134,154,0.15);
+      border: 1px solid rgba(196,134,154,0.35);
+      border-radius: 50px;
+      padding: 12px 28px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #c4869a;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .confirm-yes:hover { background: rgba(196,134,154,0.25); }
+    .confirm-no {
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 50px;
+      padding: 12px 28px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .confirm-no:hover { color: var(--text-secondary); }
+
     /* ── QR / OVERFLOW CTA ── */
     .qr-cta {
       margin-top: 28px;
@@ -1375,6 +1446,11 @@ function renderCrownRoom() {
           <div class="name-option ${state.crownName === n ? 'selected' : ''}" onclick="selectCrownName('${n}')">${n}</div>
         `).join('')}
       </div>
+    </div>
+
+    <div class="reset-section">
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">Ready to begin again?</p>
+      <button class="reset-btn" onclick="confirmReset()">Reset My Journey</button>
     </div>`;
 }
 
@@ -1383,6 +1459,52 @@ function selectCrownName(name) {
   saveState();
   renderCrownRoom();
   showToast(`You are "${name}" ✦`);
+}
+
+// ── RESET ──
+function confirmReset() {
+  const modal = document.getElementById('modal-overlay');
+  const modalContent = document.getElementById('modal-content');
+  modalContent.innerHTML = `
+    <div class="confirm-box">
+      <div class="confirm-box-title">Start Fresh?</div>
+      <div class="confirm-box-desc">
+        This will clear your chapter progress, journal entries, crown truths, and crown name.<br><br>
+        Your declarations on the Overflow wall will remain.
+      </div>
+      <div class="confirm-actions">
+        <button class="confirm-no" onclick="closeModal(event); document.getElementById('modal-overlay').classList.remove('open');">Keep My Progress</button>
+        <button class="confirm-yes" onclick="resetProgress()">Yes, Reset</button>
+      </div>
+    </div>`;
+  modal.classList.add('open');
+}
+
+function resetProgress() {
+  // Clear journey state but keep heartedPosts (they're tied to the wall, not personal journey)
+  state.journalEntries = [];
+  state.crownTruths = [];
+  state.crownName = null;
+  state.chaptersRead = {};
+  state.currentTab = 'sanctuary';
+  saveState();
+
+  // Close modal
+  document.getElementById('modal-overlay').classList.remove('open');
+
+  // Reset welcome button
+  const btn = document.querySelector('#screen-welcome .btn-begin');
+  if (btn) btn.textContent = 'Begin Your Journey';
+
+  // Re-render all tabs fresh
+  renderSanctuary();
+  renderJournal();
+  renderCrownRoom();
+
+  // Navigate back to sanctuary
+  switchTab('sanctuary');
+
+  showToast('Your journey has been reset ✦');
 }
 
 // ── OVERFLOW ──
