@@ -1082,88 +1082,131 @@ function saveState() {
 }
 
 // ── NAVIGATION ──
+const APP_TABS = ['sanctuary','journal','crown','overflow'];
+
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
-// Apply tab visibility & active indicator — no history side-effect
-function applyTab(tab) {
-  state.currentTab = tab;
-  ['sanctuary','journal','crown','overflow'].forEach(t => {
-    document.getElementById(`tab-${t}`).style.display = t === tab ? 'flex' : 'none';
-  });
-  document.querySelectorAll('.nav-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.tab === tab);
-  });
+function normalizeTab(tab) {
+  return APP_TABS.includes(tab) ? tab : 'sanctuary';
 }
 
-function goHome() {
-  if (typeof overflowRealtime !== 'undefined' && overflowRealtime) {
+// Apply tab visibility & active indicator — no history side-effect
+function applyTab(tab) {
+  const nextTab = normalizeTab(tab);
+  state.currentTab = nextTab;
+  APP_TABS.forEach(t => {
+    document.getElementById(`tab-${t}`).style.display = t === nextTab ? 'flex' : 'none';
+  });
+  document.querySelectorAll('.nav-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === nextTab);
+  });
+
+  if (nextTab === 'sanctuary') renderSanctuary();
+  if (nextTab === 'journal') renderJournal();
+  if (nextTab === 'crown') renderCrownRoom();
+  if (nextTab === 'overflow') renderOverflow();
+}
+
+function normalizeRoute(route = {}) {
+  const screenId = route.screenId || 'screen-welcome';
+  if (screenId === 'screen-main') {
+    return { screenId, tab: normalizeTab(route.tab || state.currentTab || 'sanctuary') };
+  }
+  if (screenId === 'screen-reader') {
+    return {
+      screenId,
+      tab: 'sanctuary',
+      chapterId: Number(route.chapterId) || null,
+      readerTab: route.readerTab || 'reflection'
+    };
+  }
+  if (screenId === 'screen-journal-write') {
+    return {
+      screenId,
+      tab: normalizeTab(route.tab || state.currentTab || 'journal'),
+      fromScreen: route.fromScreen || 'journal',
+      chapterId: Number(route.chapterId) || null,
+      promptIndex: Number.isInteger(route.promptIndex) ? route.promptIndex : null,
+      editIndex: Number.isInteger(route.editIndex) ? route.editIndex : null
+    };
+  }
+  return { screenId: 'screen-welcome' };
+}
+
+function setRoute(route, mode = 'push') {
+  const normalized = normalizeRoute(route);
+  try {
+    if (mode === 'replace') history.replaceState(normalized, '');
+    else history.pushState(normalized, '');
+  } catch(e) {}
+  applyRoute(normalized);
+}
+
+function applyRoute(route) {
+  const current = normalizeRoute(route);
+
+  if (current.screenId !== 'screen-main' && current.tab !== 'overflow' && overflowRealtime) {
     db.removeChannel(overflowRealtime);
     overflowRealtime = null;
   }
-  try { history.replaceState({ screenId: 'screen-welcome' }, ''); } catch(e) {}
+
+  if (current.screenId === 'screen-welcome') {
+    showScreen('screen-welcome');
+    return;
+  }
+
+  if (current.screenId === 'screen-main') {
+    showScreen('screen-main');
+    applyTab(current.tab);
+    return;
+  }
+
+  if (current.screenId === 'screen-reader') {
+    const chapter = chapters.find(c => c.id === current.chapterId);
+    if (!chapter) {
+      setRoute({ screenId: 'screen-main', tab: 'sanctuary' }, 'replace');
+      return;
+    }
+    state.currentChapter = chapter;
+    state.currentReaderTab = tabLabels[current.readerTab] ? current.readerTab : 'reflection';
+    document.getElementById('reader-title-small').textContent = chapter.title;
+    renderReaderTabs();
+    renderReaderContent(state.currentReaderTab);
+    showScreen('screen-reader');
+    return;
+  }
+
+  if (current.screenId === 'screen-journal-write') {
+    openJournalWrite(current.chapterId, current.promptIndex, current.fromScreen, {
+      editIndex: current.editIndex,
+      fromRoute: true
+    });
+    return;
+  }
+
   showScreen('screen-welcome');
+}
+
+function goHome() {
+  setRoute({ screenId: 'screen-welcome' }, 'push');
 }
 
 function enterApp() {
   const tab = state.currentTab || 'sanctuary';
-  try { history.pushState({ screenId: 'screen-main', tab }, ''); } catch(e) {}
-  showScreen('screen-main');
-  applyTab(tab);
-  renderSanctuary();
-  renderJournal();
-  renderCrownRoom();
-  renderOverflow();
+  setRoute({ screenId: 'screen-main', tab }, 'push');
   const btn = document.querySelector('#screen-welcome .btn-begin');
   if (btn) btn.textContent = 'Continue Your Journey';
 }
 
 function switchTab(tab) {
-  applyTab(tab);
-  try { history.replaceState({ screenId: 'screen-main', tab }, ''); } catch(e) {}
+  setRoute({ screenId: 'screen-main', tab: normalizeTab(tab) }, 'push');
 }
 
 window.addEventListener('popstate', (e) => {
-  const s = e.state;
-  if (!s || s.screenId === 'screen-welcome') {
-    if (typeof overflowRealtime !== 'undefined' && overflowRealtime) {
-      db.removeChannel(overflowRealtime);
-      overflowRealtime = null;
-    }
-    showScreen('screen-welcome');
-    return;
-  }
-  if (s.screenId === 'screen-main') {
-    showScreen('screen-main');
-    const activeTab = s.tab || 'sanctuary';
-    applyTab(activeTab);
-    if (activeTab === 'sanctuary') renderSanctuary();
-    else if (activeTab === 'journal') renderJournal();
-    return;
-  }
-  if (s.screenId === 'screen-reader') {
-    if (state.currentChapter) {
-      showScreen('screen-reader');
-    } else {
-      showScreen('screen-main');
-      applyTab('sanctuary');
-    }
-    return;
-  }
-  if (s.screenId === 'screen-journal-write') {
-    const meta = window._currentJournalMeta || {};
-    if (meta.fromScreen === 'reader' && state.currentChapter) {
-      showScreen('screen-reader');
-    } else {
-      showScreen('screen-main');
-      applyTab('journal');
-      renderJournal();
-    }
-    return;
-  }
-  showScreen('screen-welcome');
+  applyRoute(e.state || { screenId: 'screen-welcome' });
 });
 
 // ── SANCTUARY ──
@@ -1192,20 +1235,18 @@ function getChapterProgress(id) {
 
 function openChapter(id) {
   const ch = chapters.find(c => c.id === id);
+  if (!ch) return;
   state.currentChapter = ch;
   state.currentReaderTab = 'reflection';
-  document.getElementById('reader-title-small').textContent = ch.title;
-  renderReaderTabs();
-  renderReaderContent('reflection');
-  try { history.pushState({ screenId: 'screen-reader', chapterId: id }, ''); } catch(e) {}
-  showScreen('screen-reader');
+  setRoute({ screenId: 'screen-reader', chapterId: id, readerTab: 'reflection' }, 'push');
 }
 
 function closeReader() {
-  try { history.replaceState({ screenId: 'screen-main', tab: 'sanctuary' }, ''); } catch(e) {}
-  showScreen('screen-main');
-  applyTab('sanctuary');
-  renderSanctuary();
+  if (history.length > 1) {
+    history.back();
+    return;
+  }
+  setRoute({ screenId: 'screen-main', tab: 'sanctuary' }, 'replace');
 }
 
 const tabLabels = {
@@ -1228,6 +1269,12 @@ function renderReaderTabs() {
 function renderReaderContent(tab) {
   const ch = state.currentChapter;
   state.currentReaderTab = tab;
+  try {
+    const current = history.state || {};
+    if (current.screenId === 'screen-reader' && ch) {
+      history.replaceState({ ...current, chapterId: ch.id, readerTab: tab }, '');
+    }
+  } catch(e) {}
 
   // track progress
   if (!state.chaptersRead[ch.id]) state.chaptersRead[ch.id] = [];
@@ -1347,40 +1394,47 @@ function renderJournal() {
         </div>`}`;
 }
 
-function openJournalWrite(chapterId, promptIndex, fromScreen) {
+function openJournalWrite(chapterId, promptIndex, fromScreen, options = {}) {
   const ch = chapterId ? chapters.find(c => c.id === chapterId) : null;
   const prompt = ch && promptIndex !== null ? ch.journalPrompts[promptIndex] : null;
+  const entry = Number.isInteger(options.editIndex) ? state.journalEntries[options.editIndex] : null;
 
   const el = document.getElementById('journal-write-content');
   el.innerHTML = `
     ${prompt ? `<div class="journal-prompt-banner">"${prompt}"</div>` : ''}
-    <input type="text" id="journal-entry-title" placeholder="Give this entry a title…" style="
+    <input type="text" id="journal-entry-title" value="${entry?.title || ''}" placeholder="Give this entry a title…" style="
       width:100%;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,0.1);
       color:var(--text-primary);font-family:'Lora',serif;font-size:20px;
       padding:8px 0 12px;margin-bottom:16px;outline:none;letter-spacing:0.02em;
     " />
-    <textarea id="journal-textarea" class="journal-textarea" placeholder="${prompt ? 'Let it flow...' : 'Begin writing your truth here…'}">${''}</textarea>
+    <textarea id="journal-textarea" class="journal-textarea" placeholder="${prompt ? 'Let it flow...' : 'Begin writing your truth here…'}">${entry?.text || ''}</textarea>
   `;
 
-  window._currentJournalMeta = { chapterId, promptIndex, prompt, fromScreen: fromScreen || 'journal' };
-  try { history.pushState({ screenId: 'screen-journal-write', fromScreen: fromScreen || 'journal' }, ''); } catch(e) {}
-  showScreen('screen-journal-write');
+  window._currentJournalMeta = {
+    chapterId,
+    promptIndex,
+    prompt,
+    fromScreen: fromScreen || 'journal',
+    editIndex: Number.isInteger(options.editIndex) ? options.editIndex : undefined
+  };
+
+  if (options.fromRoute) {
+    showScreen('screen-journal-write');
+    return;
+  }
+
+  setRoute({
+    screenId: 'screen-journal-write',
+    fromScreen: fromScreen || 'journal',
+    chapterId,
+    promptIndex,
+    editIndex: Number.isInteger(options.editIndex) ? options.editIndex : null,
+    tab: state.currentTab || 'journal'
+  }, 'push');
 }
 
 function openJournalEntry(index) {
-  const e = state.journalEntries[index];
-  const el = document.getElementById('journal-write-content');
-  el.innerHTML = `
-    <input type="text" id="journal-entry-title" value="${e.title || ''}" placeholder="Title…" style="
-      width:100%;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,0.1);
-      color:var(--text-primary);font-family:'Lora',serif;font-size:20px;
-      padding:8px 0 12px;margin-bottom:16px;outline:none;letter-spacing:0.02em;
-    " />
-    <textarea id="journal-textarea" class="journal-textarea">${e.text}</textarea>
-  `;
-  window._currentJournalMeta = { editIndex: index, fromScreen: 'journal' };
-  try { history.pushState({ screenId: 'screen-journal-write', fromScreen: 'journal' }, ''); } catch(e) {}
-  showScreen('screen-journal-write');
+  openJournalWrite(null, null, 'journal', { editIndex: index });
 }
 
 function openJournalFromPrompt(chapterId, promptIndex) {
@@ -1404,16 +1458,22 @@ function saveEntry() {
 }
 
 function closeJournalWrite() {
+  if (history.length > 1) {
+    history.back();
+    return;
+  }
+
   const meta = window._currentJournalMeta || {};
   if (meta.fromScreen === 'reader' && state.currentChapter) {
-    try { history.replaceState({ screenId: 'screen-reader', chapterId: state.currentChapter.id }, ''); } catch(e) {}
-    showScreen('screen-reader');
-  } else {
-    try { history.replaceState({ screenId: 'screen-main', tab: 'journal' }, ''); } catch(e) {}
-    showScreen('screen-main');
-    applyTab('journal');
-    renderJournal();
+    setRoute({
+      screenId: 'screen-reader',
+      chapterId: state.currentChapter.id,
+      readerTab: state.currentReaderTab || 'reflection'
+    }, 'replace');
+    return;
   }
+
+  setRoute({ screenId: 'screen-main', tab: 'journal' }, 'replace');
 }
 
 // ── CROWN ROOM ──
@@ -1598,7 +1658,7 @@ function closeModal(e) {
 loadState();
 
 // Anchor browser history at the welcome screen so back/forward works throughout
-try { history.replaceState({ screenId: 'screen-welcome' }, ''); } catch(e) {}
+setRoute({ screenId: 'screen-welcome' }, 'replace');
 
 // If returning user, update welcome button label
 if (state.chaptersRead && Object.keys(state.chaptersRead).length > 0) {
