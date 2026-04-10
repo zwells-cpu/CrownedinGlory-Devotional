@@ -1,0 +1,19 @@
+{
+  "name": "Crowned in Glory: A Quietly Bold Devotional",
+  "short_name": "Crowned in Glory",
+  "description": "A quietly bold devotional experience for women reclaiming their voice.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f0820",
+  "theme_color": "#1a0d2e",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%231a0d2e'/><text y='130' x='20' font-size='140'>👑</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["lifestyle", "spirituality"],
+  "lang": "en"
+}

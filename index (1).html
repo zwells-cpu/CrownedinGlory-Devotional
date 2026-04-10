@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#1a0d2e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Crowned in Glory" />
+  <meta name="description" content="A quietly bold devotional experience for women reclaiming their voice." />
+  <title>Crowned in Glory</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-deep: #0f0820;
+      --bg-mid: #1a0d2e;
+      --bg-card: #221540;
+      --bg-glass: rgba(34, 21, 64, 0.7);
+      --plum: #6b3d7a;
+      --plum-light: #8a5499;
+      --plum-glow: rgba(107, 61, 122, 0.3);
+      --gold: #c9a84c;
+      --gold-soft: #d4b96a;
+      --gold-glow: rgba(201, 168, 76, 0.2);
+      --sapphire: #2b3a5c;
+      --sapphire-light: #3d5082;
+      --burgundy: #5c2b3a;
+      --text-primary: #e8dff5;
+      --text-secondary: #b8a8d4;
+      --text-muted: #7a6d94;
+      --text-gold: #d4b96a;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    #app {
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ── AMBIENT BACKGROUND ── */
+    .ambient {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .ambient-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.18;
+      animation: drift 20s ease-in-out infinite alternate;
+    }
+    .orb-1 { width: 500px; height: 500px; background: var(--plum); top: -150px; left: -100px; animation-delay: 0s; }
+    .orb-2 { width: 400px; height: 400px; background: var(--sapphire); bottom: -100px; right: -100px; animation-delay: -7s; }
+    .orb-3 { width: 300px; height: 300px; background: var(--gold); top: 40%; left: 50%; transform: translate(-50%, -50%); animation-delay: -14s; opacity: 0.08; }
+
+    @keyframes drift {
+      from { transform: translate(0, 0) scale(1); }
+      to { transform: translate(30px, 20px) scale(1.1); }
+    }
+
+    /* ── SCREENS ── */
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      z-index: 1;
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+      transition: opacity var(--transition), transform var(--transition);
+    }
+    .screen.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: all;
+    }
+
+    /* ── WELCOME / SPLASH ── */
+    #screen-welcome {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 40px 32px;
+      gap: 0;
+    }
+    .crown-icon {
+      font-size: 52px;
+      line-height: 1;
+      margin-bottom: 20px;
+      animation: float 4s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .welcome-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(38px, 10vw, 58px);
+      font-weight: 300;
+      line-height: 1.05;
+      letter-spacing: 0.02em;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+    .welcome-title em {
+      font-style: italic;
+      color: var(--gold-soft);
+    }
+    .welcome-subtitle {
+      font-size: 13px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+    .welcome-verse {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 15px;
+      color: var(--text-secondary);
+      max-width: 280px;
+      line-height: 1.7;
+      margin-bottom: 48px;
+      padding: 20px 24px;
+      border-left: 2px solid var(--gold);
+      text-align: left;
+      background: var(--bg-glass);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      backdrop-filter: blur(10px);
+    }
+    .btn-begin {
+      background: linear-gradient(135deg, var(--plum), var(--sapphire));
+      color: var(--text-primary);
+      border: 1px solid rgba(201, 168, 76, 0.3);
+      padding: 16px 48px;
+      border-radius: 50px;
+      font-family: 'Jost', sans-serif;
+      font-size: 14px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all var(--transition);
+      box-shadow: 0 0 30px var(--plum-glow);
+    }
+    .btn-begin:hover { box-shadow: 0 0 50px var(--plum-glow), 0 0 20px var(--gold-glow); transform: translateY(-2px); }
+    .btn-begin:active { transform: translateY(0); }
+    .welcome-author {
+      margin-top: 32px;
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+    }
+    .welcome-author span { color: var(--gold-soft); }
+
+    /* ── BOTTOM NAV ── */
+    .bottom-nav {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      background: var(--bg-glass);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(201, 168, 76, 0.12);
+      padding: 10px 0 max(10px, env(safe-area-inset-bottom));
+    }
+    .nav-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 8px 4px;
+      transition: color var(--transition);
+      font-family: 'Jost', sans-serif;
+    }
+    .nav-btn.active { color: var(--gold-soft); }
+    .nav-btn:hover { color: var(--text-secondary); }
+    .nav-icon { font-size: 20px; line-height: 1; }
+    .nav-label { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; }
+
+    /* ── SCROLLABLE CONTENT AREA ── */
+    .content-scroll {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 24px 20px 32px;
+      scrollbar-width: none;
+    }
+    .content-scroll::-webkit-scrollbar { display: none; }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      padding: 20px 20px 0;
+      flex-shrink: 0;
+    }
+    .page-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 400;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+    .page-title-gold { color: var(--gold-soft); }
+    .page-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      letter-spacing: 0.03em;
+    }
+    .divider {
+      width: 40px;
+      height: 1px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+      margin: 12px 0;
+    }
+
+    /* ── SANCTUARY / CHAPTER LIST ── */
+    .chapter-grid { display: flex; flex-direction: column; gap: 14px; }
+    .chapter-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(201, 168, 76, 0.1);
+      border-radius: var(--radius);
+      padding: 20px;
+      cursor: pointer;
+      transition: all var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .chapter-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, var(--gold), var(--plum));
+      opacity: 0.6;
+    }
+    .chapter-card:hover {
+      border-color: rgba(201, 168, 76, 0.25);
+      transform: translateX(4px);
+      box-shadow: -4px 0 20px var(--gold-glow);
+    }
+    .chapter-num {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold-soft);
+      margin-bottom: 6px;
+    }
+    .chapter-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--text-primary);
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+    .chapter-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-style: italic;
+      line-height: 1.5;
+    }
+    .chapter-progress {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .progress-bar {
+      flex: 1;
+      height: 2px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--plum-light));
+      border-radius: 2px;
+      transition: width 0.5s ease;
+    }
+    .progress-label { font-size: 10px; color: var(--text-muted); white-space: nowrap; }
+
+    /* ── CHAPTER READER ── */
+    #screen-reader {
+      background: var(--bg-deep);
+    }
+    .reader-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .back-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 20px;
+      padding: 4px;
+      line-height: 1;
+      transition: color var(--transition);
+    }
+    .back-btn:hover { color: var(--gold-soft); }
+    .reader-title-small {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 16px;
+      color: var(--text-secondary);
+      flex: 1;
+    }
+
+    .reader-section {
+      margin-bottom: 32px;
+    }
+    .section-tag {
+      font-size: 9px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold-soft);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-tag::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(201,168,76,0.3), transparent);
+    }
+
+    .scripture-block {
+      background: linear-gradient(135deg, rgba(107, 61, 122, 0.2), rgba(43, 58, 92, 0.2));
+      border: 1px solid rgba(201, 168, 76, 0.15);
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      text-align: center;
+    }
+    .scripture-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 18px;
+      line-height: 1.7;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+    }
+    .scripture-ref {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold-soft);
+    }
+
+    .body-text {
+      font-size: 15px;
+      line-height: 1.85;
+      color: var(--text-secondary);
+    }
+    .body-text p { margin-bottom: 16px; }
+
+    .declaration-lines { display: flex; flex-direction: column; gap: 6px; }
+    .declaration-line {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      font-style: italic;
+      color: var(--text-primary);
+      line-height: 1.5;
+      padding-left: 16px;
+      border-left: 2px solid transparent;
+      transition: all var(--transition);
+      cursor: default;
+    }
+    .declaration-line:hover {
+      border-left-color: var(--gold);
+      color: var(--gold-soft);
+      padding-left: 20px;
+    }
+
+    .affirmation-list { display: flex; flex-direction: column; gap: 10px; }
+    .affirmation-item {
+      background: rgba(201, 168, 76, 0.07);
+      border: 1px solid rgba(201, 168, 76, 0.15);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      font-size: 14px;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    .prayer-block {
+      background: rgba(43, 58, 92, 0.3);
+      border-radius: var(--radius);
+      padding: 20px;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--text-secondary);
+    }
+
+    .playlist-items { display: flex; flex-direction: column; gap: 10px; }
+    .playlist-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--bg-card);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .playlist-icon { font-size: 20px; opacity: 0.7; }
+    .playlist-info { flex: 1; }
+    .playlist-song { font-size: 14px; color: var(--text-primary); }
+    .playlist-artist { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    .section-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: 2px;
+    }
+    .section-tabs::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 50px;
+      padding: 8px 16px;
+      color: var(--text-muted);
+      font-family: 'Jost', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all var(--transition);
+      flex-shrink: 0;
+    }
+    .tab-btn.active {
+      background: linear-gradient(135deg, var(--plum), var(--sapphire));
+      border-color: rgba(201, 168, 76, 0.3);
+      color: var(--text-primary);
+    }
+
+    /* ── JOURNAL ── */
+    .journal-list { display: flex; flex-direction: column; gap: 12px; }
+    .journal-entry-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: var(--radius);
+      padding: 16px;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .journal-entry-card:hover { border-color: rgba(201, 168, 76, 0.2); }
+    .journal-entry-date { font-size: 10px; color: var(--text-muted); letter-spacing: 0.1em; margin-bottom: 6px; }
+    .journal-entry-title { font-family: 'Cormorant Garamond', serif; font-size: 17px; color: var(--text-primary); margin-bottom: 4px; }
+    .journal-entry-preview { font-size: 12px; color: var(--text-muted); line-height: 1.5; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
+    .journal-write {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .journal-prompt-banner {
+      background: linear-gradient(135deg, rgba(107,61,122,0.25), rgba(43,58,92,0.25));
+      border: 1px solid rgba(201,168,76,0.15);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 16px;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 16px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .journal-textarea {
+      flex: 1;
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      padding: 20px;
+      color: var(--text-primary);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 16px;
+      line-height: 1.8;
+      resize: none;
+      outline: none;
+      transition: border-color var(--transition);
+      min-height: 220px;
+    }
+    .journal-textarea::placeholder { color: var(--text-muted); font-style: italic; }
+    .journal-textarea:focus { border-color: rgba(201,168,76,0.3); }
+
+    .btn-save {
+      background: linear-gradient(135deg, var(--plum), var(--sapphire));
+      color: var(--text-primary);
+      border: 1px solid rgba(201, 168, 76, 0.25);
+      padding: 14px 28px;
+      border-radius: 50px;
+      font-family: 'Jost', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all var(--transition);
+      margin-top: 12px;
+      align-self: flex-end;
+    }
+    .btn-save:hover { box-shadow: 0 4px 20px var(--plum-glow); transform: translateY(-1px); }
+
+    .prompt-chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .prompt-chip {
+      background: var(--bg-card);
+      border: 1px solid rgba(201,168,76,0.15);
+      border-radius: 50px;
+      padding: 7px 14px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .prompt-chip:hover { border-color: var(--gold); color: var(--gold-soft); }
+
+    /* ── CROWN ROOM ── */
+    .crown-hero {
+      text-align: center;
+      padding: 20px 0 24px;
+    }
+    .crown-display {
+      font-size: 64px;
+      line-height: 1;
+      margin-bottom: 12px;
+      animation: float 4s ease-in-out infinite;
+    }
+    .crown-name-display {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      font-weight: 400;
+      color: var(--gold-soft);
+      margin-bottom: 6px;
+    }
+    .crown-name-desc { font-size: 12px; color: var(--text-muted); }
+
+    .truths-collected { display: flex; flex-direction: column; gap: 10px; }
+    .truth-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--bg-card);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      border: 1px solid rgba(201,168,76,0.12);
+    }
+    .truth-badge-icon { font-size: 20px; }
+    .truth-badge-text { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: var(--text-primary); font-style: italic; }
+    .truth-badge-src { font-size: 10px; color: var(--text-muted); letter-spacing: 0.08em; }
+
+    .name-picker {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .name-option {
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition);
+      text-align: center;
+    }
+    .name-option:hover, .name-option.selected {
+      background: linear-gradient(135deg, rgba(107,61,122,0.3), rgba(43,58,92,0.3));
+      border-color: var(--gold);
+      color: var(--gold-soft);
+    }
+
+    /* ── OVERFLOW / COMMUNITY ── */
+    .declarations-wall { display: flex; flex-direction: column; gap: 12px; }
+    .declaration-post {
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: var(--radius);
+      padding: 18px;
+      transition: all var(--transition);
+    }
+    .declaration-post:hover { border-color: rgba(201,168,76,0.15); }
+    .post-name {
+      font-size: 11px;
+      color: var(--gold-soft);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .post-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 16px;
+      line-height: 1.65;
+      color: var(--text-primary);
+    }
+    .post-hearts {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      width: fit-content;
+      transition: color var(--transition);
+    }
+    .post-hearts:hover { color: #c97b9b; }
+    .overflow-input-section {
+      background: var(--bg-card);
+      border: 1px solid rgba(201,168,76,0.15);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .overflow-input-label {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold-soft);
+      margin-bottom: 10px;
+    }
+    .overflow-textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      color: var(--text-primary);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px;
+      line-height: 1.7;
+      resize: none;
+      outline: none;
+      min-height: 80px;
+      margin-bottom: 10px;
+      transition: border-color var(--transition);
+    }
+    .overflow-textarea::placeholder { color: var(--text-muted); font-style: italic; }
+    .overflow-textarea:focus { border-color: rgba(201,168,76,0.3); }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: linear-gradient(135deg, var(--plum), var(--sapphire));
+      border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 50px;
+      padding: 12px 24px;
+      font-size: 13px;
+      color: var(--text-primary);
+      letter-spacing: 0.05em;
+      opacity: 0;
+      transition: all 0.4s ease;
+      z-index: 100;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 5, 20, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 50;
+      display: flex;
+      align-items: flex-end;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition);
+    }
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .modal-sheet {
+      background: var(--bg-mid);
+      border: 1px solid rgba(201,168,76,0.15);
+      border-radius: var(--radius) var(--radius) 0 0;
+      padding: 24px 20px max(24px, env(safe-area-inset-bottom));
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      transform: translateY(40px);
+      transition: transform var(--transition);
+    }
+    .modal-overlay.open .modal-sheet {
+      transform: translateY(0);
+    }
+    .modal-handle {
+      width: 40px;
+      height: 4px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 4px;
+      margin: 0 auto 20px;
+    }
+
+    /* ── MISC ── */
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--text-muted);
+    }
+    .empty-state .empty-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.5; }
+    .empty-state p { font-size: 14px; line-height: 1.7; }
+
+    .shimmer {
+      animation: shimmer 2s ease-in-out infinite;
+    }
+    @keyframes shimmer {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+
+    .full-stretch { display: flex; flex-direction: column; height: 100%; }
+  </style>
+</head>
+<body>
+<div id="app">
+  <div class="ambient">
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="ambient-orb orb-3"></div>
+  </div>
+
+  <!-- WELCOME SCREEN -->
+  <div class="screen active" id="screen-welcome">
+    <div class="crown-icon shimmer">👑</div>
+    <h1 class="welcome-title">Crowned<br><em>in Glory</em></h1>
+    <p class="welcome-subtitle">A Quietly Bold Devotional</p>
+    <div class="welcome-verse">
+      "He has made her a little lower than the angels, and crowned her with glory and honor."
+    </div>
+    <button class="btn-begin" onclick="enterApp()">Begin Your Journey</button>
+    <p class="welcome-author">by <span>Zanteria Burnside</span> · Daughter of the King</p>
+  </div>
+
+  <!-- MAIN APP SCREEN -->
+  <div class="screen" id="screen-main">
+    <!-- SANCTUARY -->
+    <div id="tab-sanctuary" class="full-stretch">
+      <div class="page-header">
+        <div class="page-title">The <span class="page-title-gold">Sanctuary</span></div>
+        <div class="divider"></div>
+        <p class="page-desc">Your journey through four chapters of truth</p>
+      </div>
+      <div class="content-scroll" id="sanctuary-scroll">
+        <div class="chapter-grid" id="chapter-list"></div>
+      </div>
+    </div>
+
+    <!-- JOURNAL -->
+    <div id="tab-journal" class="full-stretch" style="display:none">
+      <div class="page-header">
+        <div class="page-title">Your <span class="page-title-gold">Journal</span></div>
+        <div class="divider"></div>
+        <p class="page-desc">A space that belongs to you alone</p>
+      </div>
+      <div class="content-scroll">
+        <div id="journal-home"></div>
+      </div>
+    </div>
+
+    <!-- CROWN ROOM -->
+    <div id="tab-crown" class="full-stretch" style="display:none">
+      <div class="page-header">
+        <div class="page-title">The <span class="page-title-gold">Crown Room</span></div>
+        <div class="divider"></div>
+        <p class="page-desc">The identity you've built, truth by truth</p>
+      </div>
+      <div class="content-scroll">
+        <div id="crown-home"></div>
+      </div>
+    </div>
+
+    <!-- OVERFLOW -->
+    <div id="tab-overflow" class="full-stretch" style="display:none">
+      <div class="page-header">
+        <div class="page-title">The <span class="page-title-gold">Overflow</span></div>
+        <div class="divider"></div>
+        <p class="page-desc">A wall of voices — you are not alone</p>
+      </div>
+      <div class="content-scroll">
+        <div id="overflow-home"></div>
+      </div>
+    </div>
+
+    <nav class="bottom-nav" id="main-nav">
+      <button class="nav-btn active" onclick="switchTab('sanctuary')" data-tab="sanctuary">
+        <span class="nav-icon">🕊</span>
+        <span class="nav-label">Sanctuary</span>
+      </button>
+      <button class="nav-btn" onclick="switchTab('journal')" data-tab="journal">
+        <span class="nav-icon">✍️</span>
+        <span class="nav-label">Journal</span>
+      </button>
+      <button class="nav-btn" onclick="switchTab('crown')" data-tab="crown">
+        <span class="nav-icon">👑</span>
+        <span class="nav-label">Crown Room</span>
+      </button>
+      <button class="nav-btn" onclick="switchTab('overflow')" data-tab="overflow">
+        <span class="nav-icon">🌊</span>
+        <span class="nav-label">Overflow</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- READER SCREEN -->
+  <div class="screen" id="screen-reader">
+    <div class="reader-header">
+      <button class="back-btn" onclick="closeReader()">←</button>
+      <span class="reader-title-small" id="reader-title-small"></span>
+    </div>
+    <div class="section-tabs" style="padding: 12px 20px 0; flex-shrink:0;" id="reader-tabs"></div>
+    <div class="content-scroll" id="reader-content"></div>
+  </div>
+
+  <!-- JOURNAL WRITE SCREEN -->
+  <div class="screen" id="screen-journal-write">
+    <div class="reader-header">
+      <button class="back-btn" onclick="closeJournalWrite()">←</button>
+      <span class="reader-title-small">Your Journal</span>
+      <button class="btn-save" style="margin:0; padding: 8px 20px; font-size:11px;" onclick="saveEntry()">Save</button>
+    </div>
+    <div class="content-scroll">
+      <div id="journal-write-content"></div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+    <div class="modal-sheet" id="modal-sheet">
+      <div class="modal-handle"></div>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+const chapters = [
+  {
+    id: 1, slug: "made-in-his-image",
+    title: "Made in His Image", subtitle: "You were never meant to blend in",
+    scripture: "And God said, Let us make man in our image, after our likeness…",
+    reference: "Genesis 1:26 (KJV)",
+    crownTruth: "I bear the signature of the Creator",
+    reflection: `There are days I forget who I am. Not really because I've sinned or anything, but because life has shouted louder than Truth.\n\nBut Genesis 1:26 whispers to me like a mirror to my spirit: "You were made in My likeness." Not less than. Not overlooked. Not random.`,
+    declaration: ["I was formed in the image of Majesty.","Shaped by Sovereignty.","Spoken into being by the breath of the Almighty.","I carry His compassion.","I echo His creativity.","I walk in His authority.","I am not the sum of what's broken inside of me.","I bear the signature of the Creator, etched with precision.","His likeness is my lineage.","His Spirit is my source.","Even when I feel cracked, I'm still crafted.","Even when I question my worth, Heaven never did.","I'm not just surviving, I'm stewarding.","Dominion is woven into my DNA.","And I will walk like I know I was called."],
+    devotional: `You were never meant to blend in. You were made to reflect — His glory, His heart, His holiness.\n\nGenesis 1:26 isn't just a beautiful beginning, it's a commissioning. It's a holy reminder that your existence is on purpose, with purpose, and for God's glory. You may not always feel powerful, but the image of God in you never fades. Even when life dirties your mirror, His Spirit still recognizes you.`,
+    affirmation: ["I was made in the image of the Most High.","I carry His glory, not guilt.","I reflect His power, not pressure.","I have dominion, not defeat.","And I will live like I know who made me."],
+    prayer: `Lord, thank You for crafting me in Your image. When the world tries to define me, remind me of who I already am in You. Refine what doesn't reflect You. Reveal the authority You've placed in my hands. Let my life mirror Your majesty in every season. I surrender my will for Yours. In Jesus' name, Amen.`,
+    journalPrompts: ["What identity has the world placed on you that God never did?","Write three ways you reflect God's image that you've been too shy to claim.","What would your life look like if you truly walked like you knew who made you?"],
+    playlist: [{title:"You Know My Name",artist:"Tasha Cobbs Leonard"},{title:"Jireh",artist:"Maverick City Music"}]
+  },
+  {
+    id: 2, slug: "crowned-in-glory",
+    title: "Crowned in Glory", subtitle: "You are not small in the eyes of your Father",
+    scripture: "For thou hast made him a little lower than the angels, and hast crowned him with glory and honour.",
+    reference: "Psalm 8:4-6 (KJV)",
+    crownTruth: "I wear a crown of glory — not shame",
+    reflection: `Sometimes I forget just how royal I really am. Not because of a title, a platform, or applause — but because God chose to crown me before I could even speak.\n\nPsalm 8 reads like a divine love letter — one that reminds me: I am not small in the eyes of my Father. I am not forgettable. I am seen, visited, crowned, and commissioned.`,
+    declaration: ["Who am I…","That the Maker of galaxies knows my name?","That the God of glory thinks about me?","He doesn't just glance my way —","He leans in. Checks in.","Calls me beloved when I call myself burdened.","I was made a little lower than the divine.","Breathed into by greatness.","Clothed in glory.","Crowned in honor.","I don't walk with arrogance —","I walk with awareness.","I will not shrink.","I will not doubt the crown He placed on me.","I will wear it. Tend to it. Protect it.","Because I am crowned, not crushed.","Entrusted, not forgotten."],
+    devotional: `This passage isn't meant to flatter you — it's meant to root you. God is mindful of you. He visits you. He crowned you. He gave you dominion. You're not trying to earn favor — you were born from it.\n\nThat crown wasn't earned — it was inherited. So stand tall in your divine posture. You're walking in something Heaven handed you.`,
+    affirmation: ["I am seen and known by God.","I wear a crown of glory and honor — not shame.","God visits me, walks with me, and entrusts me with dominion.","I carry His authority, and no lie can unseat me."],
+    prayer: `Lord, how humbling it is to be so known by You. When I feel small, remind me that You crowned me. When I feel unworthy, remind me that You visit me. Thank You for entrusting me with influence and purpose. Let me wear my crown with grace and guard it with gratitude. In Jesus' name, Amen.`,
+    journalPrompts: ["Describe a moment when you forgot you were crowned. What caused it?","What does it mean to you personally to 'wear your crown with grace'?","Write a letter to yourself from the perspective of a God who is mindful of you."],
+    playlist: [{title:"Royalty",artist:"Tasha Cobbs Leonard"},{title:"The Truth",artist:"Megan Woods"}]
+  },
+  {
+    id: 3, slug: "prophesying-into-purpose",
+    title: "Prophesying Into Purpose", subtitle: "Speak like you're already living in what God promised",
+    scripture: "The tongue has the power of life and death, and those who love it will eat its fruit.",
+    reference: "Proverbs 18:21 (NIV)",
+    crownTruth: "My words are seeds, not just sounds",
+    reflection: `There are days I speak louder than I believe. There are moments I prophesy, not because I can see the breakthrough, but because I refuse to stay silenced by the wilderness.\n\nI don't always feel anointed, but I speak like I am. I don't always feel seen, but I speak like I know I'm heard. Because silence is a slow death — and my destiny deserves a declaration. Period.`,
+    declaration: ["I'm not waiting for a stage.","I prophesy over what still looks like wilderness.","I prophesy over my waiting.","Let these dry bones hear the Word of the Lord.","I don't just have potential — I have permission.","Heaven already greenlit my becoming.","I don't need another sign — I just need to speak.","I am becoming.","I am birthing.","I am bold.","I am blessed — even in this in-between."],
+    devotional: `Sometimes the greatest act of faith is to talk like you're already living in what God promised. Not in denial, but in defiance of doubt.\n\nGod doesn't need your perfection to fulfill His plan, but He will honor your faith-fueled voice. Speak over yourself. Speak over your future. Prophesy into that purpose until you're living in what you used to only declare in tears.`,
+    affirmation: ["I speak life into my calling.","My words are seeds, not just sounds.","I declare what God says about me, even when I don't feel it yet.","I prophesy boldly, not because I'm confident in myself, but because I'm rooted in Him."],
+    prayer: `God, teach my tongue to agree with Heaven. Silence every lie I've swallowed about being too late, too broken, too much, or not enough. Let Your Spirit rise in me when I speak. Anoint my voice to birth what my eyes have not seen yet. I trust You, even when I tremble. In Jesus' name, Amen.`,
+    journalPrompts: ["What is one thing you've been afraid to declare out loud over your life?","Write a three-sentence prophecy over yourself for the next season of your life.","What lie has kept you from speaking? Name it — then write the truth that replaces it."],
+    playlist: [{title:"He's Able",artist:"Deitrick Haddon & Voices of Unity"},{title:"The Story I'll Tell",artist:"Maverick City Music, Naomi Raine"}]
+  },
+  {
+    id: 4, slug: "unmuted",
+    title: "Unmuted: Reclaiming the Mic", subtitle: "Your voice is not just welcome — it is warfare",
+    scripture: "I believed; therefore I have spoken…",
+    reference: "Psalm 116:10 (NIV)",
+    crownTruth: "I am the mic — built for truth, wired for glory",
+    reflection: `We weren't born to be silent. We came into this world loud! Laughing, singing, full of wonder and why. But somewhere along the way, we stopped taking up space.\n\nSomewhere along the way, we learned that boldness could be punished. We were told our voice was too much. So we dimmed. We quieted. We disappeared.\n\nBut now? We're taking it all back.`,
+    declaration: ["I am not background noise.","I am not an echo.","I am the mic —","Built for truth,","Wired for glory,","Positioned for such a time as this.","Every time I open my mouth, Hell trembles.","Heaven leans in.","Because faith has a frequency, and I'm tuned in.","My voice has purpose.","My voice has power.","My voice is permission —","For the next girl to rise,","For the silence to shatter,","For the chains to fall."],
+    devotional: `My silence once looked like humility, but it was really fear dressed up in manners. I thought staying quiet made me safe — but all it did was make me shrink.\n\nNow I know: my voice is not just welcome, it is warfare. It breaks cycles. It births freedom. It carries generations.\n\nGod has always used voices — crying in the wilderness, declaring in the temple, praying in the upper room. And He wants to use mine. I've been unmuted.`,
+    affirmation: ["I will no longer mute myself to make others comfortable.","My voice is anointed.","I speak with clarity, conviction, and compassion.","God trusts me with truth, and I will release it.","My voice has purpose, and I will not waste it."],
+    prayer: `God, thank You for the voice You've given me. Forgive me for every time I buried it under fear, rejection, or insecurity. Today, I rise with boldness. I choose to speak life, to speak truth. Let my voice reflect Your power and presence. Use me to shift atmospheres, break chains, and build bridges. In Jesus' name, Amen.`,
+    journalPrompts: ["When did you first learn to make yourself smaller? Write about that moment with compassion for younger you.","What would you say if you knew no one would judge you for it?","Your mic is on now. Write your first unmuted declaration to the world."],
+    playlist: [{title:"Speak the Name",artist:"Koryn Hawthorne"},{title:"Rest on Us",artist:"Maverick City Music & UPPERROOM"}]
+  }
+];
+
+const crownNameOptions = ["Daughter of the King","The Anointed One","Voice in the Wilderness","Crowned and Called","Keeper of the Flame","Beloved and Bold","The Overcomer","She Who Rises","Kingdom Builder","The Unsilenced One","Carrier of Glory","The Declared One"];
+
+const seedDeclarations = [
+  { name: "Crowned & Called", text: "I am no longer the woman who shrinks. I have been unmuted, anointed, and sent.", hearts: 24 },
+  { name: "She Who Rises", text: "My silence once looked like humility — but it was fear dressed in manners. Today I speak.", hearts: 31 },
+  { name: "Daughter of the King", text: "I prophesy over my future even when my hands are shaking. Heaven already said yes.", hearts: 18 },
+  { name: "The Overcomer", text: "I wear my crown not because I earned it — but because I finally stopped refusing it.", hearts: 42 },
+  { name: "Carrier of Glory", text: "God is mindful of me. He visits me. And I will walk like I believe that today.", hearts: 15 }
+];
+
+// ── STATE ──
+let state = {
+  currentTab: 'sanctuary',
+  currentChapter: null,
+  currentReaderTab: 'reflection',
+  journalEntries: [],
+  crownTruths: [],
+  crownName: null,
+  declarations: [...seedDeclarations],
+  chaptersRead: {},
+  heartedPosts: {}
+};
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem('cig_state');
+    if (saved) { const s = JSON.parse(saved); state = {...state, ...s}; }
+  } catch(e) {}
+}
+
+function saveState() {
+  try { localStorage.setItem('cig_state', JSON.stringify(state)); } catch(e) {}
+}
+
+// ── NAVIGATION ──
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function enterApp() {
+  showScreen('screen-main');
+  renderSanctuary();
+  renderJournal();
+  renderCrownRoom();
+  renderOverflow();
+}
+
+function switchTab(tab) {
+  state.currentTab = tab;
+  ['sanctuary','journal','crown','overflow'].forEach(t => {
+    document.getElementById(`tab-${t}`).style.display = t === tab ? 'flex' : 'none';
+  });
+  document.querySelectorAll('.nav-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === tab);
+  });
+}
+
+// ── SANCTUARY ──
+function renderSanctuary() {
+  const list = document.getElementById('chapter-list');
+  list.innerHTML = chapters.map((ch, i) => {
+    const progress = getChapterProgress(ch.id);
+    return `
+      <div class="chapter-card" onclick="openChapter(${ch.id})">
+        <div class="chapter-num">Chapter ${i+1}</div>
+        <div class="chapter-name">${ch.title}</div>
+        <div class="chapter-sub">${ch.subtitle}</div>
+        <div class="chapter-progress">
+          <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
+          <div class="progress-label">${progress === 0 ? 'Begin' : progress === 100 ? 'Complete ✦' : `${progress}%`}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function getChapterProgress(id) {
+  const tabs = ['reflection','declaration','devotional','affirmation','prayer','playlist'];
+  const visited = state.chaptersRead[id] || [];
+  return Math.round((visited.length / tabs.length) * 100);
+}
+
+function openChapter(id) {
+  const ch = chapters.find(c => c.id === id);
+  state.currentChapter = ch;
+  state.currentReaderTab = 'reflection';
+  document.getElementById('reader-title-small').textContent = ch.title;
+  renderReaderTabs();
+  renderReaderContent('reflection');
+  showScreen('screen-reader');
+}
+
+function closeReader() {
+  showScreen('screen-main');
+  renderSanctuary();
+}
+
+const tabLabels = {
+  reflection: '✦ Reflection',
+  declaration: '📜 Declaration',
+  devotional: '📖 Devotional',
+  affirmation: '🌟 Affirmation',
+  prayer: '🙏 Prayer',
+  playlist: '🎵 Playlist'
+};
+
+function renderReaderTabs() {
+  const ch = state.currentChapter;
+  const tabsEl = document.getElementById('reader-tabs');
+  tabsEl.innerHTML = Object.entries(tabLabels).map(([key, label]) => `
+    <button class="tab-btn ${state.currentReaderTab === key ? 'active' : ''}" onclick="renderReaderContent('${key}')">${label}</button>
+  `).join('');
+}
+
+function renderReaderContent(tab) {
+  const ch = state.currentChapter;
+  state.currentReaderTab = tab;
+
+  // track progress
+  if (!state.chaptersRead[ch.id]) state.chaptersRead[ch.id] = [];
+  if (!state.chaptersRead[ch.id].includes(tab)) state.chaptersRead[ch.id].push(tab);
+
+  // unlock crown truth
+  if (tab === 'prayer' && !state.crownTruths.find(t => t.chapterId === ch.id)) {
+    state.crownTruths.push({ chapterId: ch.id, truth: ch.crownTruth, title: ch.title });
+    setTimeout(() => showToast(`✦ Crown truth unlocked: "${ch.crownTruth}"`), 400);
+  }
+
+  saveState();
+  renderReaderTabs();
+
+  const el = document.getElementById('reader-content');
+
+  if (tab === 'reflection') {
+    el.innerHTML = `
+      <div class="reader-section">
+        <div class="section-tag">Scripture</div>
+        <div class="scripture-block">
+          <div class="scripture-text">"${ch.scripture}"</div>
+          <div class="scripture-ref">— ${ch.reference}</div>
+        </div>
+      </div>
+      <div class="reader-section">
+        <div class="section-tag">Reflection</div>
+        <div class="body-text">${ch.reflection.split('\n\n').map(p => `<p>${p}</p>`).join('')}</div>
+      </div>
+      <div class="reader-section">
+        <div class="section-tag">Journal Prompts</div>
+        <div class="prompt-chips">
+          ${ch.journalPrompts.map((p,i) => `<div class="prompt-chip" onclick="openJournalFromPrompt(${ch.id}, ${i})">${i===0?'🪞':i===1?'✍️':'🎙️'} Prompt ${i+1}</div>`).join('')}
+        </div>
+      </div>`;
+  } else if (tab === 'declaration') {
+    el.innerHTML = `
+      <div class="reader-section">
+        <div class="section-tag">Speak This</div>
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;font-style:italic;">Read each line aloud. Let it land.</p>
+        <div class="declaration-lines">${ch.declaration.map(l => `<div class="declaration-line">${l}</div>`).join('')}</div>
+      </div>`;
+  } else if (tab === 'devotional') {
+    el.innerHTML = `
+      <div class="reader-section">
+        <div class="section-tag">Today's Word</div>
+        <div class="body-text">${ch.devotional.split('\n\n').map(p => `<p>${p}</p>`).join('')}</div>
+      </div>`;
+  } else if (tab === 'affirmation') {
+    el.innerHTML = `
+      <div class="reader-section">
+        <div class="section-tag">Declare This</div>
+        <div class="affirmation-list">${ch.affirmation.map(a => `<div class="affirmation-item">✦ ${a}</div>`).join('')}</div>
+      </div>`;
+  } else if (tab === 'prayer') {
+    el.innerHTML = `
+      <div class="reader-section">
+        <div class="section-tag">Pray This</div>
+        <div class="prayer-block">${ch.prayer}</div>
+      </div>
+      <div class="reader-section">
+        <div class="section-tag">Crown Truth Unlocked</div>
+        <div class="truth-badge">
+          <span class="truth-badge-icon">👑</span>
+          <div>
+            <div class="truth-badge-text">${ch.crownTruth}</div>
+            <div class="truth-badge-src">${ch.title}</div>
+          </div>
+        </div>
+      </div>`;
+  } else if (tab === 'playlist') {
+    el.innerHTML = `
+      <div class="reader-section">
+        <div class="section-tag">Worship Soundtrack</div>
+        <div class="playlist-items">
+          ${ch.playlist.map(s => `
+            <div class="playlist-item">
+              <span class="playlist-icon">🎵</span>
+              <div class="playlist-info">
+                <div class="playlist-song">${s.title}</div>
+                <div class="playlist-artist">${s.artist}</div>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>`;
+  }
+}
+
+// ── JOURNAL ──
+function renderJournal() {
+  const el = document.getElementById('journal-home');
+  const hasEntries = state.journalEntries.length > 0;
+
+  el.innerHTML = `
+    <button class="btn-begin" style="width:100%;margin-bottom:20px;border-radius:var(--radius);padding:14px;" onclick="openJournalWrite(null, null)">
+      + New Entry
+    </button>
+    ${hasEntries
+      ? `<div class="journal-list">${state.journalEntries.slice().reverse().map((e,i) => `
+          <div class="journal-entry-card" onclick="openJournalEntry(${state.journalEntries.length - 1 - i})">
+            <div class="journal-entry-date">${new Date(e.date).toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div>
+            <div class="journal-entry-title">${e.title || 'Untitled Entry'}</div>
+            <div class="journal-entry-preview">${e.text}</div>
+          </div>`).join('')}</div>`
+      : `<div class="empty-state">
+          <div class="empty-icon">📝</div>
+          <p>Your pages are waiting.<br>Every word you write here is yours.</p>
+        </div>`}`;
+}
+
+function openJournalWrite(chapterId, promptIndex) {
+  const ch = chapterId ? chapters.find(c => c.id === chapterId) : null;
+  const prompt = ch && promptIndex !== null ? ch.journalPrompts[promptIndex] : null;
+
+  const el = document.getElementById('journal-write-content');
+  el.innerHTML = `
+    ${prompt ? `<div class="journal-prompt-banner">"${prompt}"</div>` : ''}
+    <input type="text" id="journal-entry-title" placeholder="Give this entry a title…" style="
+      width:100%;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,0.1);
+      color:var(--text-primary);font-family:'Cormorant Garamond',serif;font-size:20px;
+      padding:8px 0 12px;margin-bottom:16px;outline:none;letter-spacing:0.02em;
+    " />
+    <textarea id="journal-textarea" class="journal-textarea" placeholder="${prompt ? 'Let it flow...' : 'Begin writing your truth here…'}">${''}</textarea>
+  `;
+
+  window._currentJournalMeta = { chapterId, promptIndex, prompt };
+  showScreen('screen-journal-write');
+}
+
+function openJournalEntry(index) {
+  const e = state.journalEntries[index];
+  const el = document.getElementById('journal-write-content');
+  el.innerHTML = `
+    <input type="text" id="journal-entry-title" value="${e.title || ''}" placeholder="Title…" style="
+      width:100%;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,0.1);
+      color:var(--text-primary);font-family:'Cormorant Garamond',serif;font-size:20px;
+      padding:8px 0 12px;margin-bottom:16px;outline:none;letter-spacing:0.02em;
+    " />
+    <textarea id="journal-textarea" class="journal-textarea">${e.text}</textarea>
+  `;
+  window._currentJournalMeta = { editIndex: index };
+  showScreen('screen-journal-write');
+}
+
+function openJournalFromPrompt(chapterId, promptIndex) {
+  openJournalWrite(chapterId, promptIndex);
+}
+
+function saveEntry() {
+  const text = document.getElementById('journal-textarea')?.value?.trim();
+  const title = document.getElementById('journal-entry-title')?.value?.trim();
+  if (!text) { showToast('Write something first ✦'); return; }
+
+  const meta = window._currentJournalMeta || {};
+  if (meta.editIndex !== undefined) {
+    state.journalEntries[meta.editIndex] = { ...state.journalEntries[meta.editIndex], title, text };
+  } else {
+    state.journalEntries.push({ id: Date.now(), title, text, date: new Date().toISOString(), chapterId: meta.chapterId, promptIndex: meta.promptIndex });
+  }
+  saveState();
+  showToast('Entry saved ✦');
+  closeJournalWrite();
+}
+
+function closeJournalWrite() {
+  showScreen('screen-main');
+  renderJournal();
+}
+
+// ── CROWN ROOM ──
+function renderCrownRoom() {
+  const el = document.getElementById('crown-home');
+  const name = state.crownName || 'Your Name Awaits';
+
+  el.innerHTML = `
+    <div class="crown-hero">
+      <div class="crown-display">👑</div>
+      <div class="crown-name-display">${name}</div>
+      <div class="crown-name-desc">${state.crownName ? 'Your chosen identity' : 'Choose your crown name below'}</div>
+    </div>
+
+    <div class="reader-section">
+      <div class="section-tag">Truths You've Collected</div>
+      ${state.crownTruths.length > 0
+        ? `<div class="truths-collected">${state.crownTruths.map(t => `
+            <div class="truth-badge">
+              <span class="truth-badge-icon">✦</span>
+              <div>
+                <div class="truth-badge-text">"${t.truth}"</div>
+                <div class="truth-badge-src">${t.title}</div>
+              </div>
+            </div>`).join('')}</div>`
+        : `<div class="empty-state">
+            <div class="empty-icon">✦</div>
+            <p>Complete chapters in the Sanctuary to unlock your crown truths.</p>
+          </div>`}
+    </div>
+
+    <div class="reader-section">
+      <div class="section-tag">Choose Your Crown Name</div>
+      <div class="name-picker">
+        ${crownNameOptions.map(n => `
+          <div class="name-option ${state.crownName === n ? 'selected' : ''}" onclick="selectCrownName('${n}')">${n}</div>
+        `).join('')}
+      </div>
+    </div>`;
+}
+
+const crownNameOptions = ["Daughter of the King","The Anointed One","Voice in the Wilderness","Crowned and Called","Keeper of the Flame","Beloved and Bold","The Overcomer","She Who Rises","Kingdom Builder","The Unsilenced One","Carrier of Glory","The Declared One"];
+
+function selectCrownName(name) {
+  state.crownName = name;
+  saveState();
+  renderCrownRoom();
+  showToast(`You are "${name}" ✦`);
+}
+
+// ── OVERFLOW ──
+function renderOverflow() {
+  const el = document.getElementById('overflow-home');
+  el.innerHTML = `
+    <div class="overflow-input-section">
+      <div class="overflow-input-label">Post Your Declaration</div>
+      <textarea class="overflow-textarea" id="overflow-input" placeholder="Declare something over yourself. The wall is listening…" rows="3"></textarea>
+      <button class="btn-save" style="align-self:flex-end;" onclick="postDeclaration()">Post ✦</button>
+    </div>
+    <div class="section-tag" style="margin-bottom:14px;">✦ The Wall of Voices</div>
+    <div class="declarations-wall">
+      ${state.declarations.slice().reverse().map((d,i) => `
+        <div class="declaration-post">
+          <div class="post-name">👑 ${d.name}</div>
+          <div class="post-text">"${d.text}"</div>
+          <div class="post-hearts" onclick="heartPost(${state.declarations.length - 1 - i})">
+            ${state.heartedPosts[state.declarations.length - 1 - i] ? '♥' : '♡'} ${d.hearts}
+          </div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function postDeclaration() {
+  const text = document.getElementById('overflow-input')?.value?.trim();
+  if (!text) { showToast('Write your declaration first ✦'); return; }
+  const name = state.crownName || 'A Crowned Sister';
+  state.declarations.push({ name, text, hearts: 0 });
+  saveState();
+  renderOverflow();
+  showToast('Your voice has been heard ✦');
+}
+
+function heartPost(index) {
+  if (state.heartedPosts[index]) return;
+  state.declarations[index].hearts++;
+  state.heartedPosts[index] = true;
+  saveState();
+  renderOverflow();
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ── MODAL ──
+function closeModal(e) {
+  if (e.target === document.getElementById('modal-overlay')) {
+    document.getElementById('modal-overlay').classList.remove('open');
+  }
+}
+
+// ── INIT ──
+loadState();
+</script>
+</body>
+</html>
