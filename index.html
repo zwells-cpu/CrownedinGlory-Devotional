@@ -767,6 +767,87 @@
     }
 
     .full-stretch { display: flex; flex-direction: column; height: 100%; }
+
+
+    /* ── HOME BUTTON ── */
+    .home-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 13px;
+      padding: 4px 8px;
+      line-height: 1;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-family: 'Nunito', sans-serif;
+      transition: color var(--transition);
+      white-space: nowrap;
+    }
+    .home-btn:hover { color: var(--gold-soft); }
+
+    /* ── MAIN APP TOP BAR ── */
+    .app-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px 0;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 2;
+    }
+    .app-topbar-title {
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: 13px;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    /* ── QR / OVERFLOW CTA ── */
+    .qr-cta {
+      margin-top: 28px;
+      background: linear-gradient(135deg, rgba(155,92,114,0.18), rgba(122,92,138,0.18));
+      border: 1px solid rgba(212,184,150,0.2);
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      text-align: center;
+    }
+    .qr-cta-label {
+      font-size: 9px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--champagne-soft, var(--gold-soft));
+      margin-bottom: 10px;
+    }
+    .qr-cta-text {
+      font-family: 'Lora', serif;
+      font-size: 17px;
+      font-style: italic;
+      color: var(--text-primary);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    .qr-code-wrap {
+      display: inline-block;
+      background: #f0e8ec;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 14px;
+    }
+    .qr-code-wrap img { display: block; width: 140px; height: 140px; border-radius: 4px; }
+    .qr-link {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--champagne-soft, var(--gold-soft));
+      text-decoration: none;
+      border-bottom: 1px solid rgba(212,184,150,0.4);
+      padding-bottom: 2px;
+      transition: all var(--transition);
+    }
+    .qr-link:hover { color: var(--text-primary); border-bottom-color: var(--text-primary); }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -792,6 +873,10 @@
 
   <!-- MAIN APP SCREEN -->
   <div class="screen" id="screen-main">
+    <div class="app-topbar">
+      <span class="app-topbar-title">Crowned in Glory</span>
+      <button class="home-btn" onclick="goHome()">✦ Home</button>
+    </div>
     <!-- SANCTUARY -->
     <div id="tab-sanctuary" class="full-stretch">
       <div class="page-header">
@@ -865,6 +950,7 @@
     <div class="reader-header">
       <button class="back-btn" onclick="closeReader()">←</button>
       <span class="reader-title-small" id="reader-title-small"></span>
+      <button class="home-btn" onclick="goHome()">✦ Home</button>
     </div>
     <div class="section-tabs" style="padding: 12px 20px 0; flex-shrink:0;" id="reader-tabs"></div>
     <div class="content-scroll" id="reader-content"></div>
@@ -875,7 +961,10 @@
     <div class="reader-header">
       <button class="back-btn" onclick="closeJournalWrite()">←</button>
       <span class="reader-title-small">Your Journal</span>
-      <button class="btn-save" style="margin:0; padding: 8px 20px; font-size:11px;" onclick="saveEntry()">Save</button>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button class="home-btn" onclick="goHome()">✦ Home</button>
+        <button class="btn-save" style="margin:0; padding: 8px 20px; font-size:11px;" onclick="saveEntry()">Save</button>
+      </div>
     </div>
     <div class="content-scroll">
       <div id="journal-write-content"></div>
@@ -998,12 +1087,24 @@ function showScreen(id) {
   document.getElementById(id).classList.add('active');
 }
 
+function goHome() {
+  // Clean up realtime subscription if leaving overflow
+  if (typeof overflowRealtime !== 'undefined' && overflowRealtime) {
+    db.removeChannel(overflowRealtime);
+    overflowRealtime = null;
+  }
+  showScreen('screen-welcome');
+}
+
 function enterApp() {
   showScreen('screen-main');
   renderSanctuary();
   renderJournal();
   renderCrownRoom();
   renderOverflow();
+  // Update button text for returning users
+  const btn = document.querySelector('#screen-welcome .btn-begin');
+  if (btn) btn.textContent = 'Continue Your Journey';
 }
 
 function switchTab(tab) {
@@ -1159,6 +1260,15 @@ function renderReaderContent(tab) {
               </div>
             </div>`).join('')}
         </div>
+      </div>
+      <div class="qr-cta">
+        <div class="qr-cta-label">Continue the Journey</div>
+        <div class="qr-cta-text">You're not going back to silence.<br>There's more waiting for you.</div>
+        <div class="qr-code-wrap">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&color=1c1118&bgcolor=f0e8ec&data=https%3A%2F%2Fdaugteroftheking.carrd.co%2F" alt="QR Code" />
+        </div>
+        <br>
+        <a class="qr-link" href="https://daugteroftheking.carrd.co/" target="_blank" rel="noopener">daugteroftheking.carrd.co</a>
       </div>`;
   }
 }
@@ -1424,6 +1534,12 @@ function closeModal(e) {
 
 // ── INIT ──
 loadState();
+
+// If returning user, update welcome button label
+if (state.chaptersRead && Object.keys(state.chaptersRead).length > 0) {
+  const btn = document.querySelector('#screen-welcome .btn-begin');
+  if (btn) btn.textContent = 'Continue Your Journey';
+}
 </script>
 </body>
 </html>
