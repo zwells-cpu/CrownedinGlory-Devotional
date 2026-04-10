@@ -652,6 +652,7 @@
       transition: color var(--transition);
     }
     .post-hearts:hover { color: #c4869a; }
+    .post-hearts.hearted { color: #c4869a; }
     .overflow-input-section {
       background: var(--bg-card);
       border: 1px solid rgba(212,184,150,0.15);
@@ -767,6 +768,7 @@
 
     .full-stretch { display: flex; flex-direction: column; height: 100%; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div id="app">
@@ -955,13 +957,17 @@ const chapters = [
 
 const crownNameOptions = ["Daughter of the King","The Anointed One","Voice in the Wilderness","Crowned and Called","Keeper of the Flame","Beloved and Bold","The Overcomer","She Who Rises","Kingdom Builder","The Unsilenced One","Carrier of Glory","The Declared One"];
 
-const seedDeclarations = [
-  { name: "Crowned & Called", text: "I am no longer the woman who shrinks. I have been unmuted, anointed, and sent.", hearts: 24 },
-  { name: "She Who Rises", text: "My silence once looked like humility — but it was fear dressed in manners. Today I speak.", hearts: 31 },
-  { name: "Daughter of the King", text: "I prophesy over my future even when my hands are shaking. Heaven already said yes.", hearts: 18 },
-  { name: "The Overcomer", text: "I wear my crown not because I earned it — but because I finally stopped refusing it.", hearts: 42 },
-  { name: "Carrier of Glory", text: "God is mindful of me. He visits me. And I will walk like I believe that today.", hearts: 15 }
-];
+// ── SUPABASE ──
+const SUPABASE_URL = 'https://hndvaeuamzyianladfia.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhuZHZhZXVhbXp5aWFubGFkZmlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODk1ODksImV4cCI6MjA5MTI2NTU4OX0.INRNQ4A42cHhkFcXEDMNiNYRhVYO6CiglyMK9gmpZ8w';
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Unique session ID for heart deduplication
+function getSessionId() {
+  let id = localStorage.getItem('cig_session');
+  if (!id) { id = crypto.randomUUID(); localStorage.setItem('cig_session', id); }
+  return id;
+}
 
 // ── STATE ──
 let state = {
@@ -971,7 +977,6 @@ let state = {
   journalEntries: [],
   crownTruths: [],
   crownName: null,
-  declarations: [...seedDeclarations],
   chaptersRead: {},
   heartedPosts: {}
 };
@@ -1286,6 +1291,9 @@ function selectCrownName(name) {
 }
 
 // ── OVERFLOW ──
+// ── OVERFLOW (Supabase) ──
+let overflowRealtime = null;
+
 function renderOverflow() {
   const el = document.getElementById('overflow-home');
   el.innerHTML = `
@@ -1295,34 +1303,108 @@ function renderOverflow() {
       <button class="btn-save" style="align-self:flex-end;" onclick="postDeclaration()">Post ✦</button>
     </div>
     <div class="section-tag" style="margin-bottom:14px;">✦ The Wall of Voices</div>
-    <div class="declarations-wall">
-      ${state.declarations.slice().reverse().map((d,i) => `
-        <div class="declaration-post">
-          <div class="post-name">${d.name}</div>
-          <div class="post-text">"${d.text}"</div>
-          <div class="post-hearts" onclick="heartPost(${state.declarations.length - 1 - i})">
-            ${state.heartedPosts[state.declarations.length - 1 - i] ? '♥' : '♡'} ${d.hearts}
-          </div>
-        </div>`).join('')}
+    <div class="declarations-wall" id="declarations-wall">
+      <div class="empty-state"><div class="empty-icon">✦</div><p>Loading voices…</p></div>
     </div>`;
+  loadDeclarations();
+  subscribeToDeclarations();
 }
 
-function postDeclaration() {
+async function loadDeclarations() {
+  const wall = document.getElementById('declarations-wall');
+  if (!wall) return;
+  try {
+    const { data, error } = await db
+      .from('declarations')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    renderDeclarationsList(data || []);
+  } catch (e) {
+    const wall = document.getElementById('declarations-wall');
+    if (wall) wall.innerHTML = '<div class="empty-state"><p>Could not load voices. Check your connection.</p></div>';
+  }
+}
+
+function renderDeclarationsList(declarations) {
+  const wall = document.getElementById('declarations-wall');
+  if (!wall) return;
+  if (!declarations.length) {
+    wall.innerHTML = '<div class="empty-state"><div class="empty-icon">✦</div><p>Be the first to declare something over this wall.</p></div>';
+    return;
+  }
+  wall.innerHTML = declarations.map(d => `
+    <div class="declaration-post" data-id="${d.id}">
+      <div class="post-name">${d.name}</div>
+      <div class="post-text">"${d.text}"</div>
+      <div class="post-hearts ${state.heartedPosts[d.id] ? 'hearted' : ''}" onclick="heartPost('${d.id}', ${d.hearts})">
+        ${state.heartedPosts[d.id] ? '♥' : '♡'} <span class="heart-count">${d.hearts}</span>
+      </div>
+    </div>`).join('');
+}
+
+function subscribeToDeclarations() {
+  if (overflowRealtime) { db.removeChannel(overflowRealtime); }
+  overflowRealtime = db
+    .channel('declarations-live')
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'declarations' },
+      payload => {
+        const wall = document.getElementById('declarations-wall');
+        if (!wall) return;
+        const d = payload.new;
+        const newPost = document.createElement('div');
+        newPost.className = 'declaration-post';
+        newPost.dataset.id = d.id;
+        newPost.innerHTML = `
+          <div class="post-name">${d.name}</div>
+          <div class="post-text">"${d.text}"</div>
+          <div class="post-hearts" onclick="heartPost('${d.id}', ${d.hearts})">♡ <span class="heart-count">${d.hearts}</span></div>`;
+        wall.insertBefore(newPost, wall.firstChild);
+      })
+    .subscribe();
+}
+
+async function postDeclaration() {
   const text = document.getElementById('overflow-input')?.value?.trim();
   if (!text) { showToast('Write your declaration first ✦'); return; }
   const name = state.crownName || 'A Crowned Sister';
-  state.declarations.push({ name, text, hearts: 0 });
-  saveState();
-  renderOverflow();
-  showToast('Your voice has been heard ✦');
+  const btn = document.querySelector('#tab-overflow .btn-save');
+  if (btn) { btn.textContent = 'Posting…'; btn.disabled = true; }
+  try {
+    const { error } = await db.from('declarations').insert({ name, text, hearts: 0 });
+    if (error) throw error;
+    document.getElementById('overflow-input').value = '';
+    showToast('Your voice has been heard ✦');
+  } catch(e) {
+    showToast('Could not post — check your connection');
+  } finally {
+    if (btn) { btn.textContent = 'Post ✦'; btn.disabled = false; }
+  }
 }
 
-function heartPost(index) {
-  if (state.heartedPosts[index]) return;
-  state.declarations[index].hearts++;
-  state.heartedPosts[index] = true;
+async function heartPost(id, currentHearts) {
+  if (state.heartedPosts[id]) return;
+  state.heartedPosts[id] = true;
   saveState();
-  renderOverflow();
+
+  // Optimistic UI update
+  const post = document.querySelector(`.declaration-post[data-id="${id}"]`);
+  if (post) {
+    const heartsEl = post.querySelector('.post-hearts');
+    const countEl = post.querySelector('.heart-count');
+    if (heartsEl) heartsEl.classList.add('hearted');
+    if (countEl) countEl.textContent = currentHearts + 1;
+    heartsEl.innerHTML = `♥ <span class="heart-count">${currentHearts + 1}</span>`;
+  }
+
+  try {
+    // Record this session's heart
+    await db.from('declaration_hearts').insert({ declaration_id: id, session_id: getSessionId() });
+    // Increment the count
+    await db.from('declarations').update({ hearts: currentHearts + 1 }).eq('id', id);
+  } catch(e) {
+    // Silently fail — optimistic update stays
+  }
 }
 
 // ── TOAST ──
